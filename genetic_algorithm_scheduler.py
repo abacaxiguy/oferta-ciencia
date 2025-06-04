@@ -43,24 +43,24 @@ class GeneticScheduler:
         self.disciplinas = self._init_disciplinas()
         self.salas = self._init_salas()
         self.horarios = self._init_horarios()
-        
+            
     def _init_professores(self) -> List[Professor]:
         professores_data = [
             ("ALAN PEDRO DA SILVA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1"]),
             ("ALEJANDRO CÉSAR FRERY", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO"]),
             ("ALMIR PEREIRA GUIMARÃES", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("ALLA", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA"]),
-            ("ARTUROHD", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA"]),
+            ("ALLA", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA", "SISTEMAS OPERACIONAIS"]),
+            ("ARTUROHD", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA", "PROGRAMAÇÃO 2", "COMPILADORES"]),
             ("AYDANO PAMPONET MACHADO", ["LÓGICA PARA COMPUTAÇÃO", "TEORIA DOS GRAFOS"]),
             ("BALDOINO", ["BANCO DE DADOS", "PROGRAMAÇÃO 2"]),
-            ("BRUNO PIMENTEL", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS"]),
-            ("BRUNO NOGUEIRA", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA"]),
-            ("CID", ["TEORIA DA COMPUTAÇÃO", "LÓGICA PARA COMPUTAÇÃO"]),
+            ("BRUNO PIMENTEL", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS", "MATEMÁTICA DISCRETA", "PROBABILIDADE E ESTATÍSTICA", "CIÊNCIA DE DADOS"]),
+            ("BRUNO NOGUEIRA", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
+            ("CID", ["TEORIA DA COMPUTAÇÃO", "LÓGICA PARA COMPUTAÇÃO", "NOÇÕES DE DIREITO"]),
             ("DAVI BIBIANO BRITO", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1"]),
             ("ERICK", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("EVANDRO", ["MATEMÁTICA DISCRETA", "TEORIA DOS GRAFOS"]),
+            ("EVANDRO", ["MATEMÁTICA DISCRETA", "TEORIA DOS GRAFOS","INTELIGÊNCIA ARTIFICIAL"]),
             ("FÁBIO JOSÉ COUTINHO", ["PROGRAMAÇÃO 2", "PROJETO E ANÁLISE DE ALGORITMOS"]),
-            ("PARAGUA", ["BANCO DE DADOS", "PROGRAMAÇÃO 3"]),
+            ("PARAGUA", ["BANCO DE DADOS", "PROGRAMAÇÃO 3", "COMPILADORES"]),
             ("GLAUBER RODRIGUES LEITE", ["PROGRAMAÇÃO 1", "ESTRUTURA DE DADOS"]),
             ("ÍCARO", ["CÁLCULO DIFERENCIAL E INTEGRAL", "ÁLGEBRA LINEAR"]),
             ("IG", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DOS GRAFOS"]),
@@ -70,28 +70,29 @@ class GeneticScheduler:
             ("LEANDRO", ["MATEMÁTICA DISCRETA", "CÁLCULO DIFERENCIAL E INTEGRAL"]),
             ("LEONARDO VIANA PEREIRA", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("LUCAS BENEVIDES VIANA", ["TEORIA DOS GRAFOS", "LÓGICA PARA COMPUTAÇÃO"]),
-            ("MARCELO COSTA OLIVEIRA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1"]),
-            ("MÁRCIO", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA"]),
-            ("MARIA CRISTINA TENÓRIO", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS"]),
-            ("MÁRIO HOZANO LUCAS", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA"]),
+            ("MARCELO COSTA OLIVEIRA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1", "COMPUTAÇÃO GRÁFICA", "METODOLOGIA DE PESQUISA E TRABALHO INDIVIDUAL"]),
+            ("MÁRCIO", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA", "ESTRUTURA DE DADOS"]),
+            ("MARIA CRISTINA TENÓRIO", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS", "BANCO DE DADOS"]),
+            ("MÁRIO HOZANO LUCAS", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA", "PROGRAMAÇÃO 2"]),
             ("MAURÍCIO BELTRÃO", ["TEORIA DA COMPUTAÇÃO", "LÓGICA PARA COMPUTAÇÃO"]),
             ("OLIVAL", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DOS GRAFOS"]),
             ("PETRUCIO", ["BANCO DE DADOS", "PROGRAMAÇÃO 2"]),
-            ("RAFAEL", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("RANILSON PAIVA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1"]),
-            ("RIAN GABRIEL", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA"]),
+            ("RAFAEL", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES", "CONCEITOS DE LINGUAGEM DE PROGRAMAÇÃO"]),
+            ("RANILSON PAIVA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1", "PROBABILIDADE E ESTATÍSTICA"]),
+            ("RIAN GABRIEL", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("ROBERTA", ["LÓGICA PARA COMPUTAÇÃO", "TEORIA DA COMPUTAÇÃO"]),
             ("RODRIGO PAES", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("RODRIGO JOSÉ SARMENTO", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA"]),
             ("THALES", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA"]),
             ("THIAGO CORDEIRO", ["PROGRAMAÇÃO 2", "PROJETO E ANÁLISE DE ALGORITMOS"]),
-            ("TIAGO ALVES DE ALMEIDA", ["TEORIA DOS GRAFOS", "LÓGICA PARA COMPUTAÇÃO"]),
+            ("TIAGO ALVES DE ALMEIDA", ["TEORIA DOS GRAFOS", "LÓGICA PARA COMPUTAÇÃO","CÁLCULO DIFERENCIAL E INTEGRAL"]),
             ("TIAGO FIGUEIREDO VIEIRA", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("WILLY CARVALHO TIENGO", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO"]),
+            ("WILLY CARVALHO TIENGO", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO", "PROJETO E DESENVOLVIMENTO DE SISTEMAS", "TESTE DE SOFTWARE"]),
             ("YANG", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA"])
         ]
-        
-        return [Professor(nome, areas) for nome, areas in professores_data]
+        # Crie e retorne a lista de objetos Professor, conforme a sua implementação
+        return [Professor(nome, disciplinas) for nome, disciplinas in professores_data]
+
     
     def _init_disciplinas(self) -> List[Disciplina]:
         disciplinas_obrigatorias = [
@@ -175,21 +176,24 @@ class GeneticScheduler:
         return False
     
     def criar_cromossomo(self) -> List[Alocacao]:
-        """Cria um cromossomo (solução) aleatória"""
+        """Cria um cromossomo (solução) aleatória com alocação em 8 períodos"""
         cromossomo = []
         disciplinas_alocadas = set()
         
-        # Prioriza disciplinas obrigatórias
+        # Ordena priorizando disciplinas obrigatórias e pelo período recomendado
         disciplinas_ordenadas = sorted(self.disciplinas, 
-                                     key=lambda d: (not d.obrigatoria, d.periodo))
+                                    key=lambda d: (not d.obrigatoria, d.periodo))
+        
+        # Distribui as disciplinas em 8 períodos tentando respeitar o período ideal
+        periodos = {i: [] for i in range(1, 9)}  # períodos 1 a 8
         
         for disciplina in disciplinas_ordenadas:
             if disciplina.nome in disciplinas_alocadas:
                 continue
-                
-            # Encontra professores aptos
+            
+            # Encontra professores aptos para a disciplina
             professores_aptos = [p for p in self.professores 
-                               if self.professor_pode_lecionar(p, disciplina)]
+                                if self.professor_pode_lecionar(p, disciplina)]
             
             if not professores_aptos:
                 continue
@@ -198,7 +202,7 @@ class GeneticScheduler:
             
             # Escolhe sala apropriada
             salas_disponiveis = [s for s in self.salas 
-                               if not disciplina.laboratorio_necessario or s.laboratorio]
+                                if not disciplina.laboratorio_necessario or s.laboratorio]
             if not salas_disponiveis:
                 salas_disponiveis = self.salas
             
@@ -207,10 +211,17 @@ class GeneticScheduler:
             # Aloca horários (2 blocos de 2 horas cada)
             horarios_alocados = self._alocar_horarios_disciplina()
             
-            if horarios_alocados:
-                alocacao = Alocacao(professor.nome, disciplina.nome, sala.nome, horarios_alocados)
-                cromossomo.append(alocacao)
-                disciplinas_alocadas.add(disciplina.nome)
+            if not horarios_alocados:
+                continue
+            
+            # Define o período para a disciplina
+            # Se possível, usa o período recomendado, senão escolhe aleatório entre 1 e 8
+            periodo_alocado = disciplina.periodo if 1 <= disciplina.periodo <= 8 else random.randint(1, 8)
+            
+            # Cria a alocação incluindo o período
+            alocacao = Alocacao(professor.nome, disciplina.nome, sala.nome, horarios_alocados)
+            cromossomo.append(alocacao)
+            disciplinas_alocadas.add(disciplina.nome)
         
         return cromossomo
     
