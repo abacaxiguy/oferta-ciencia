@@ -50,17 +50,17 @@ class GeneticScheduler:
             ("ALEJANDRO CÉSAR FRERY", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO"]),
             ("ALMIR PEREIRA GUIMARÃES", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
             ("ALLA", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA", "SISTEMAS OPERACIONAIS"]),
-            ("ARTUROHD", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA", "PROGRAMAÇÃO 2", "COMPILADORES"]),
+            ("ARTUROHD", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA", "PROGRAMAÇÃO 2", "COMPILADORES", "CÁLCULO 1", "CÁLCULO 2", "CÁLCULO 3", "CÁLCULO 4"]),
             ("AYDANO PAMPONET MACHADO", ["LÓGICA PARA COMPUTAÇÃO", "TEORIA DOS GRAFOS"]),
             ("BALDOINO", ["BANCO DE DADOS", "PROGRAMAÇÃO 2"]),
-            ("BRUNO PIMENTEL", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS", "MATEMÁTICA DISCRETA", "PROBABILIDADE E ESTATÍSTICA", "CIÊNCIA DE DADOS"]),
-            ("BRUNO NOGUEIRA", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
+            ("BRUNO PIMENTEL", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS", "MATEMÁTICA DISCRETA", "PROBABILIDADE E ESTATÍSTICA", "CIÊNCIA DE DADOS", "APRENDIZAGEM DE MÁQUINA", "EXPLORAÇÃO E MINERAÇÃO DE DADOS"]),
+            ("BRUNO NOGUEIRA", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES", "EMPREENDEDORISMO", "INTRODUÇÃO À ADMINISTRAÇÃO"]),
             ("CID", ["TEORIA DA COMPUTAÇÃO", "LÓGICA PARA COMPUTAÇÃO", "NOÇÕES DE DIREITO"]),
             ("DAVI BIBIANO BRITO", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1"]),
-            ("ERICK", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("EVANDRO", ["MATEMÁTICA DISCRETA", "TEORIA DOS GRAFOS","INTELIGÊNCIA ARTIFICIAL"]),
+            ("ERICK", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES", "SISTEMAS DIGITAIS", "CIRCUITOS DIGITAIS", "MICROCONTROLADORES E APLICAÇÕES", "FPGA"]),
+            ("EVANDRO", ["MATEMÁTICA DISCRETA", "TEORIA DOS GRAFOS","INTELIGÊNCIA ARTIFICIAL", "REDES NEURAIS E APRENDIZADO PROFUNDO", "COMPUTAÇÃO EVOLUCIONÁRIA"]),
             ("FÁBIO JOSÉ COUTINHO", ["PROGRAMAÇÃO 2", "PROJETO E ANÁLISE DE ALGORITMOS"]),
-            ("PARAGUA", ["BANCO DE DADOS", "PROGRAMAÇÃO 3", "COMPILADORES"]),
+            ("PARAGUA", ["BANCO DE DADOS", "PROGRAMAÇÃO 3", "COMPILADORES", "BANCO DE DADOS 2", "SISTEMAS EMBARCADOS"]),
             ("GLAUBER RODRIGUES LEITE", ["PROGRAMAÇÃO 1", "ESTRUTURA DE DADOS"]),
             ("ÍCARO", ["CÁLCULO DIFERENCIAL E INTEGRAL", "ÁLGEBRA LINEAR"]),
             ("IG", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DOS GRAFOS"]),
@@ -70,14 +70,14 @@ class GeneticScheduler:
             ("LEANDRO", ["MATEMÁTICA DISCRETA", "CÁLCULO DIFERENCIAL E INTEGRAL"]),
             ("LEONARDO VIANA PEREIRA", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("LUCAS BENEVIDES VIANA", ["TEORIA DOS GRAFOS", "LÓGICA PARA COMPUTAÇÃO"]),
-            ("MARCELO COSTA OLIVEIRA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1", "COMPUTAÇÃO GRÁFICA", "METODOLOGIA DE PESQUISA E TRABALHO INDIVIDUAL"]),
+            ("MARCELO COSTA OLIVEIRA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1", "COMPUTAÇÃO GRÁFICA", "METODOLOGIA DE PESQUISA E TRABALHO INDIVIDUAL", "VISÃO COMPUTACIONAL", "PROCESSAMENTO DIGITAL DE IMAGENS"]),
             ("MÁRCIO", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA", "ESTRUTURA DE DADOS"]),
             ("MARIA CRISTINA TENÓRIO", ["PROGRAMAÇÃO 3", "PROJETO E ANÁLISE DE ALGORITMOS", "BANCO DE DADOS"]),
             ("MÁRIO HOZANO LUCAS", ["CÁLCULO DIFERENCIAL E INTEGRAL", "MATEMÁTICA DISCRETA", "PROGRAMAÇÃO 2"]),
             ("MAURÍCIO BELTRÃO", ["TEORIA DA COMPUTAÇÃO", "LÓGICA PARA COMPUTAÇÃO"]),
             ("OLIVAL", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DOS GRAFOS"]),
             ("PETRUCIO", ["BANCO DE DADOS", "PROGRAMAÇÃO 2"]),
-            ("RAFAEL", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES", "CONCEITOS DE LINGUAGEM DE PROGRAMAÇÃO"]),
+            ("RAFAEL", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES", "CONCEITOS DE LINGUAGEM DE PROGRAMAÇÃO", "SISTEMAS DISTRIBUÍDOS", "REDES DE COMPUTADORES 2"]),
             ("RANILSON PAIVA", ["ESTRUTURA DE DADOS", "PROGRAMAÇÃO 1", "PROBABILIDADE E ESTATÍSTICA"]),
             ("RIAN GABRIEL", ["COMPUTAÇÃO, SOCIEDADE E ÉTICA", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("ROBERTA", ["LÓGICA PARA COMPUTAÇÃO", "TEORIA DA COMPUTAÇÃO"]),
@@ -87,7 +87,7 @@ class GeneticScheduler:
             ("THIAGO CORDEIRO", ["PROGRAMAÇÃO 2", "PROJETO E ANÁLISE DE ALGORITMOS"]),
             ("TIAGO ALVES DE ALMEIDA", ["TEORIA DOS GRAFOS", "LÓGICA PARA COMPUTAÇÃO","CÁLCULO DIFERENCIAL E INTEGRAL"]),
             ("TIAGO FIGUEIREDO VIEIRA", ["REDES DE COMPUTADORES", "ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES"]),
-            ("WILLY CARVALHO TIENGO", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO", "PROJETO E DESENVOLVIMENTO DE SISTEMAS", "TESTE DE SOFTWARE"]),
+            ("WILLY CARVALHO TIENGO", ["PROBABILIDADE E ESTATÍSTICA", "TEORIA DA COMPUTAÇÃO", "PROJETO E DESENVOLVIMENTO DE SISTEMAS", "TESTE DE SOFTWARE", "SEGURANÇA DE SISTEMAS COMPUTACIONAIS", "GERÊNCIA DE PROJETO"]),
             ("YANG", ["ÁLGEBRA LINEAR", "GEOMETRIA ANALÍTICA"])
         ]
         # Crie e retorne a lista de objetos Professor, conforme a sua implementação
@@ -127,8 +127,69 @@ class GeneticScheduler:
             ("ACE 5: EVENTO", 8, True, False)
         ]
         
+        # Eletivas - Disciplinas opcionais (período 0 conforme projeto.txt)
+        disciplinas_eletivas = [
+            ("INTRODUÇÃO À COMPUTAÇÃO", 0, False, True),
+            ("CONCEITOS DE LINGUAGEM DE PROGRAMAÇÃO", 0, False, False),
+            ("APRENDIZAGEM DE MÁQUINA", 0, False, True),
+            ("SISTEMAS DIGITAIS", 0, False, False),
+            ("SISTEMAS DISTRIBUÍDOS", 0, False, False),
+            ("REDES NEURAIS E APRENDIZADO PROFUNDO", 0, False, True),
+            ("FPGA", 0, False, True),
+            ("INTERAÇÃO HOMEM-MÁQUINA", 0, False, True),
+            ("PROCESSAMENTO DIGITAL DE IMAGENS", 0, False, True),
+            ("COMPUTAÇÃO EVOLUCIONÁRIA", 0, False, True),
+            ("SISTEMAS EMBARCADOS", 0, False, True),
+            ("GERÊNCIA DE PROJETO", 0, False, False),
+            ("VISÃO COMPUTACIONAL", 0, False, True),
+            ("CIÊNCIA DE DADOS", 0, False, True),
+            ("MICROCONTROLADORES E APLICAÇÕES", 0, False, True),
+            ("SEGURANÇA DE SISTEMAS COMPUTACIONAIS", 0, False, False),
+            ("CÁLCULO 3", 0, False, False),
+            ("TÓPICOS EM CIÊNCIA DA COMPUTAÇÃO 1", 0, False, False),
+            ("TÓPICOS EM CIÊNCIA DA COMPUTAÇÃO 2", 0, False, False),
+            ("TÓPICOS EM CIÊNCIA DA COMPUTAÇÃO 3", 0, False, False),
+            ("TÓPICOS EM MATEMÁTICA PARA COMPUTAÇÃO 1", 0, False, False),
+            ("TÓPICOS EM MATEMÁTICA PARA COMPUTAÇÃO 2", 0, False, False),
+            ("TÓPICOS EM MATEMÁTICA PARA COMPUTAÇÃO 3", 0, False, False),
+            ("TÓPICOS EM FÍSICA PARA COMPUTAÇÃO 1", 0, False, False),
+            ("TÓPICOS EM FÍSICA PARA COMPUTAÇÃO 2", 0, False, False),
+            ("TÓPICOS EM FÍSICA PARA COMPUTAÇÃO 3", 0, False, False),
+            ("NAVEGAÇÃO EM ROBÓTICA MÓVEL", 0, False, True),
+            ("PESQUISA OPERACIONAL", 0, False, False),
+            ("CÁLCULO 2", 0, False, False),
+            ("EMPREENDEDORISMO", 0, False, False),
+            ("TESTE DE SOFTWARE", 0, False, True),
+            ("BANCO DE DADOS 2", 0, False, True),
+            ("FUNDAMENTOS DE IA APLICADOS AO DIAGNÓSTICO MÉDICO", 0, False, True),
+            ("PROCESSAMENTO DE LINGUAGEM NATURAL", 0, False, True),
+            ("LABORATÓRIO DE PROGRAMAÇÃO", 0, False, True),
+            ("INTELIGÊNCIA ARTIFICIAL APLICADA AO DIAGNÓSTICO DE DOENÇAS", 0, False, True),
+            ("CÁLCULO 4", 0, False, False),
+            ("TÓPICOS EM SOFTWARE BÁSICO", 0, False, True),
+            ("LIBRAS", 0, False, False),
+            ("GAMIFICAÇÃO", 0, False, True),
+            ("EXPLORAÇÃO E MINERAÇÃO DE DADOS", 0, False, True),
+            ("TÓPICOS ESPECIAIS EM GESTÃO DE PROJETOS", 0, False, False),
+            ("TÓPICOS ESP. EM BANCO DE DADOS: GERAÇÃO DE DADOS SEMIESTRUTURADOS", 0, False, True),
+            ("TÓPICOS EM ENGENHARIA DE SOFTWARE - PROJETANDO LINHAS DE PRODUTO DE SOFTWARE", 0, False, True),
+            ("CÁLCULO 1", 0, False, False),
+            ("INTRODUÇÃO À ADMINISTRAÇÃO", 0, False, False),
+            ("LABORATÓRIO DE INTELIGÊNCIA ARTIFICIAL EM ROBÓTICA", 0, False, True),
+            ("TÓPICOS ESPECIAIS EM GERÊNCIA E PROCESSAMENTO DE DADOS EM LARGAESCALA", 0, False, True),
+            ("REDES DE COMPUTADORES 2", 0, False, False),
+            ("REUSO DE SOFTWARE E METODOLOGIAS ÁGEIS", 0, False, True),
+            ("INGLÊS INSTRUMENTAL", 0, False, False),
+            ("METODOLOGIA E PROCESSOS", 0, False, False),
+            ("CIRCUITOS DIGITAIS", 0, False, True),
+            ("DESENHO", 0, False, False)
+        ]
+        
+        # Combina disciplinas obrigatórias e eletivas
+        todas_disciplinas = disciplinas_obrigatorias + disciplinas_eletivas
+        
         return [Disciplina(nome, periodo, obrigatoria, 4, laboratorio) 
-                for nome, periodo, obrigatoria, laboratorio in disciplinas_obrigatorias]
+                for nome, periodo, obrigatoria, laboratorio in todas_disciplinas]
     
     def _init_salas(self) -> List[Sala]:
         salas_data = [
@@ -176,16 +237,16 @@ class GeneticScheduler:
         return False
     
     def criar_cromossomo(self) -> List[Alocacao]:
-        """Cria um cromossomo (solução) aleatória com alocação em 8 períodos"""
+        """Cria um cromossomo (solução) aleatória com alocação em 8 períodos sem conflitos"""
         cromossomo = []
         disciplinas_alocadas = set()
+        horarios_ocupados = set()  # Track occupied time slots
+        professores_horarios = {}  # Track professor schedules
+        salas_horarios = {}  # Track room schedules
         
         # Ordena priorizando disciplinas obrigatórias e pelo período recomendado
         disciplinas_ordenadas = sorted(self.disciplinas, 
                                     key=lambda d: (not d.obrigatoria, d.periodo))
-        
-        # Distribui as disciplinas em 8 períodos tentando respeitar o período ideal
-        periodos = {i: [] for i in range(1, 9)}  # períodos 1 a 8
         
         for disciplina in disciplinas_ordenadas:
             if disciplina.nome in disciplinas_alocadas:
@@ -198,30 +259,48 @@ class GeneticScheduler:
             if not professores_aptos:
                 continue
             
-            professor = random.choice(professores_aptos)
+            # Tenta várias combinações de professor, sala e horário sem conflito
+            tentativas_maximas = 50
+            alocacao_criada = False
             
-            # Escolhe sala apropriada
-            salas_disponiveis = [s for s in self.salas 
-                                if not disciplina.laboratorio_necessario or s.laboratorio]
-            if not salas_disponiveis:
-                salas_disponiveis = self.salas
+            for tentativa in range(tentativas_maximas):
+                professor = random.choice(professores_aptos)
+                
+                # Escolhe sala apropriada
+                salas_disponiveis = [s for s in self.salas 
+                                    if not disciplina.laboratorio_necessario or s.laboratorio]
+                if not salas_disponiveis:
+                    salas_disponiveis = self.salas
+                
+                sala = random.choice(salas_disponiveis)
+                
+                # Tenta alocar horários sem conflito
+                horarios_alocados = self._alocar_horarios_sem_conflito(
+                    professores_horarios.get(professor.nome, []),
+                    salas_horarios.get(sala.nome, [])
+                )
+                
+                if horarios_alocados:
+                    # Cria a alocação
+                    alocacao = Alocacao(professor.nome, disciplina.nome, sala.nome, horarios_alocados)
+                    cromossomo.append(alocacao)
+                    disciplinas_alocadas.add(disciplina.nome)
+                    
+                    # Atualiza os registros de horários ocupados
+                    if professor.nome not in professores_horarios:
+                        professores_horarios[professor.nome] = []
+                    professores_horarios[professor.nome].extend(horarios_alocados)
+                    
+                    if sala.nome not in salas_horarios:
+                        salas_horarios[sala.nome] = []
+                    salas_horarios[sala.nome].extend(horarios_alocados)
+                    
+                    alocacao_criada = True
+                    break
             
-            sala = random.choice(salas_disponiveis)
-            
-            # Aloca horários (2 blocos de 2 horas cada)
-            horarios_alocados = self._alocar_horarios_disciplina()
-            
-            if not horarios_alocados:
+            # Se não conseguiu alocar após muitas tentativas, pula esta disciplina
+            if not alocacao_criada:
                 continue
-            
-            # Define o período para a disciplina
-            # Se possível, usa o período recomendado, senão escolhe aleatório entre 1 e 8
-            periodo_alocado = disciplina.periodo if 1 <= disciplina.periodo <= 8 else random.randint(1, 8)
-            
-            # Cria a alocação incluindo o período
-            alocacao = Alocacao(professor.nome, disciplina.nome, sala.nome, horarios_alocados)
-            cromossomo.append(alocacao)
-            disciplinas_alocadas.add(disciplina.nome)
         
         return cromossomo
     
@@ -257,6 +336,92 @@ class GeneticScheduler:
         
         return horarios[:4]  # Garante exatamente 4 horários
     
+    def _alocar_horarios_sem_conflito(self, horarios_professor: List[Horario], horarios_sala: List[Horario]) -> List[Horario]:
+        """Aloca 4 horas de aula em 2 blocos de 2 horas sem conflitos, preferencialmente em dias diferentes"""
+        horarios_ocupados = set()
+        
+        # Converte listas de horários ocupados para conjunto de tuplas
+        for h in horarios_professor + horarios_sala:
+            horarios_ocupados.add((h.dia, h.turno, h.slot))
+        
+        # ESTRATÉGIA MELHORADA: Tenta primeiro alocar em dois dias diferentes
+        # Primeira tentativa: forçar dois dias diferentes
+        for tentativa_dois_dias in range(50):
+            dia1 = random.choice(self.dias_semana)
+            dias_restantes = [d for d in self.dias_semana if d != dia1]
+            if not dias_restantes:
+                continue
+            dia2 = random.choice(dias_restantes)
+            
+            # Tenta alocar 2 horas no primeiro dia
+            turno1 = random.choice(['M', 'T'])
+            slot_inicial1 = random.randint(1, 5)
+            
+            # Verifica se os slots estão livres no primeiro dia
+            slot1_livre = (dia1, turno1, slot_inicial1) not in horarios_ocupados
+            slot2_livre = (dia1, turno1, slot_inicial1 + 1) not in horarios_ocupados
+            
+            if not (slot1_livre and slot2_livre):
+                continue
+            
+            # Tenta alocar 2 horas no segundo dia
+            turno2 = random.choice(['M', 'T'])
+            slot_inicial2 = random.randint(1, 5)
+            
+            # Verifica se os slots estão livres no segundo dia
+            slot3_livre = (dia2, turno2, slot_inicial2) not in horarios_ocupados
+            slot4_livre = (dia2, turno2, slot_inicial2 + 1) not in horarios_ocupados
+            
+            if slot3_livre and slot4_livre:
+                # Sucesso! Dois dias diferentes
+                return [
+                    Horario(dia1, turno1, slot_inicial1),
+                    Horario(dia1, turno1, slot_inicial1 + 1),
+                    Horario(dia2, turno2, slot_inicial2),
+                    Horario(dia2, turno2, slot_inicial2 + 1)
+                ]
+        
+        # FALLBACK: Se não conseguiu dois dias, tenta método original
+        horarios_alocados = []
+        tentativas = 0
+        max_tentativas = 50
+        
+        while len(horarios_alocados) < 4 and tentativas < max_tentativas:
+            dia = random.choice(self.dias_semana)
+            turno = random.choice(['M', 'T'])
+            slot_inicial = random.randint(1, 5)
+            
+            # Verifica se os 2 slots consecutivos estão livres
+            slot1_livre = (dia, turno, slot_inicial) not in horarios_ocupados
+            slot2_livre = (dia, turno, slot_inicial + 1) not in horarios_ocupados
+            
+            if slot1_livre and slot2_livre:
+                horario1 = Horario(dia, turno, slot_inicial)
+                horario2 = Horario(dia, turno, slot_inicial + 1)
+                
+                # Verifica se estes horários não estão já na lista que estamos construindo
+                horarios_existentes = [(h.dia, h.turno, h.slot) for h in horarios_alocados]
+                if (dia, turno, slot_inicial) not in horarios_existentes and (dia, turno, slot_inicial + 1) not in horarios_existentes:
+                    horarios_alocados.extend([horario1, horario2])
+                    # Adiciona aos horários ocupados para evitar sobreposição no mesmo bloco
+                    horarios_ocupados.add((dia, turno, slot_inicial))
+                    horarios_ocupados.add((dia, turno, slot_inicial + 1))
+            
+            tentativas += 1
+            
+            # Se já temos 4 horários, termina
+            if len(horarios_alocados) >= 4:
+                break
+                
+            # Se já temos 2 horários, força outro dia para os próximos 2
+            if len(horarios_alocados) == 2:
+                dias_ja_usados = set(h.dia for h in horarios_alocados)
+                dias_livres = [d for d in self.dias_semana if d not in dias_ja_usados]
+                if dias_livres:
+                    dia = random.choice(dias_livres)
+        
+        return horarios_alocados[:4] if len(horarios_alocados) == 4 else []
+    
     def calcular_fitness(self, cromossomo: List[Alocacao]) -> float:
         """Calcula o fitness de um cromossomo (quanto maior, melhor)"""
         fitness = 1000  # Valor base
@@ -269,13 +434,15 @@ class GeneticScheduler:
                 prof_horarios[alocacao.professor] = []
             prof_horarios[alocacao.professor].extend(alocacao.horarios)
         
-        # Penaliza conflitos de horário do professor
+        # Penaliza conflitos de horário do professor (mais rigoroso)
         for prof, horarios in prof_horarios.items():
-            horarios_set = set((h.dia, h.turno, h.slot) for h in horarios)
-            if len(horarios_set) != len(horarios):
-                penalidades += 100  # Conflito grave
+            horarios_tuples = [(h.dia, h.turno, h.slot) for h in horarios]
+            horarios_set = set(horarios_tuples)
+            conflitos_prof = len(horarios_tuples) - len(horarios_set)
+            if conflitos_prof > 0:
+                penalidades += 1000 * conflitos_prof  # Penalidade extremamente alta para conflitos
         
-        # Verifica conflitos de sala
+        # Verifica conflitos de sala (mais rigoroso)
         sala_horarios = {}
         for alocacao in cromossomo:
             if alocacao.sala not in sala_horarios:
@@ -284,9 +451,11 @@ class GeneticScheduler:
         
         # Penaliza conflitos de sala
         for sala, horarios in sala_horarios.items():
-            horarios_set = set((h.dia, h.turno, h.slot) for h in horarios)
-            if len(horarios_set) != len(horarios):
-                penalidades += 100  # Conflito grave
+            horarios_tuples = [(h.dia, h.turno, h.slot) for h in horarios]
+            horarios_set = set(horarios_tuples)
+            conflitos_sala = len(horarios_tuples) - len(horarios_set)
+            if conflitos_sala > 0:
+                penalidades += 1000 * conflitos_sala  # Penalidade extremamente alta para conflitos
         
         # Verifica carga de trabalho dos professores
         disciplinas_por_prof = {}
@@ -326,6 +495,16 @@ class GeneticScheduler:
             elif len(dias_prof) >= 3:  # Pelo menos 3 dias
                 fitness += 10
         
+        # NOVA PENALIDADE: Penaliza disciplinas em apenas um dia (incentiva dispersão)
+        for alocacao in cromossomo:
+            dias_disciplina = set(h.dia for h in alocacao.horarios)
+            if len(dias_disciplina) == 1:
+                # Penaliza fortemente disciplinas concentradas em um só dia
+                penalidades += 30
+            elif len(dias_disciplina) == 2:
+                # Bonifica disciplinas bem distribuídas em dois dias
+                fitness += 15
+        
         return max(0, fitness - penalidades)
     
     def crossover(self, pai1: List[Alocacao], pai2: List[Alocacao]) -> Tuple[List[Alocacao], List[Alocacao]]:
@@ -341,6 +520,10 @@ class GeneticScheduler:
         # Remove duplicações de disciplinas
         filho1 = self._remove_duplicatas(filho1)
         filho2 = self._remove_duplicatas(filho2)
+        
+        # Valida e corrige conflitos
+        filho1 = self._validar_e_corrigir_cromossomo(filho1)
+        filho2 = self._validar_e_corrigir_cromossomo(filho2)
         
         return filho1, filho2
     
@@ -383,11 +566,72 @@ class GeneticScheduler:
                 
                 # Muta os horários
                 if random.random() < 0.3:
-                    novos_horarios = self._alocar_horarios_disciplina()
+                    # Coleta horários ocupados por outros
+                    outros_horarios_prof = []
+                    outros_horarios_sala = []
+                    
+                    for j, outra_alocacao in enumerate(cromossomo_mutado):
+                        if i != j:  # Não incluir a própria alocação
+                            if outra_alocacao.professor == alocacao.professor:
+                                outros_horarios_prof.extend(outra_alocacao.horarios)
+                            if outra_alocacao.sala == alocacao.sala:
+                                outros_horarios_sala.extend(outra_alocacao.horarios)
+                    
+                    novos_horarios = self._alocar_horarios_sem_conflito(outros_horarios_prof, outros_horarios_sala)
                     if novos_horarios:
                         cromossomo_mutado[i].horarios = novos_horarios
         
-        return cromossomo_mutado
+        return self._validar_e_corrigir_cromossomo(cromossomo_mutado)
+    
+    def _validar_e_corrigir_cromossomo(self, cromossomo: List[Alocacao]) -> List[Alocacao]:
+        """Valida um cromossomo e remove alocações conflitantes rigorosamente"""
+        cromossomo_valido = []
+        horarios_prof_ocupados = {}
+        horarios_sala_ocupados = {}
+        horarios_globais_ocupados = set()  # Track all occupied time slots globally
+        
+        # Ordena por prioridade (disciplinas obrigatórias primeiro)
+        disciplinas_dict = {d.nome: d for d in self.disciplinas}
+        cromossomo_ordenado = sorted(cromossomo, 
+                                   key=lambda a: (not disciplinas_dict.get(a.disciplina, Disciplina("", 0, False)).obrigatoria,
+                                                disciplinas_dict.get(a.disciplina, Disciplina("", 0, False)).periodo))
+        
+        for alocacao in cromossomo_ordenado:
+            conflito = False
+            
+            # Verifica conflitos MÚLTIPLOS
+            for horario in alocacao.horarios:
+                tupla_horario = (horario.dia, horario.turno, horario.slot)
+                
+                # Conflito de professor
+                if alocacao.professor in horarios_prof_ocupados:
+                    if tupla_horario in horarios_prof_ocupados[alocacao.professor]:
+                        conflito = True
+                        break
+                
+                # Conflito de sala
+                if alocacao.sala in horarios_sala_ocupados:
+                    if tupla_horario in horarios_sala_ocupados[alocacao.sala]:
+                        conflito = True
+                        break
+            
+            # Se não há conflito, adiciona à solução válida
+            if not conflito:
+                cromossomo_valido.append(alocacao)
+                
+                # Registra horários ocupados
+                if alocacao.professor not in horarios_prof_ocupados:
+                    horarios_prof_ocupados[alocacao.professor] = set()
+                if alocacao.sala not in horarios_sala_ocupados:
+                    horarios_sala_ocupados[alocacao.sala] = set()
+                
+                for horario in alocacao.horarios:
+                    tupla_horario = (horario.dia, horario.turno, horario.slot)
+                    horarios_prof_ocupados[alocacao.professor].add(tupla_horario)
+                    horarios_sala_ocupados[alocacao.sala].add(tupla_horario)
+                    horarios_globais_ocupados.add(tupla_horario)
+        
+        return cromossomo_valido
     
     def executar_algoritmo(self, tamanho_populacao: int = 50, num_geracoes: int = 100) -> List[Alocacao]:
         """Executa o algoritmo genético"""

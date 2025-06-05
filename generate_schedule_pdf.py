@@ -110,7 +110,7 @@ def generate_random_colors(num_colors=64):
         r = random.uniform(0.5, 1.0) # Brighter colors
         g = random.uniform(0.5, 1.0)
         b = random.uniform(0.5, 1.0)
-        color_list.append(colors.Color(r, g, b, alpha=0.8)) # Slightly transparent
+        color_list.append(colors.Color(r, g, b)) # Solid colors (no alpha/transparency)
     return color_list
 
 COLOR_PALETTE = generate_random_colors()
@@ -145,11 +145,11 @@ def draw_page_template(c: canvas.Canvas, title_text: str, location_text: str):
     footer_text = f"Horário criado: {random.randint(1,28)}/{random.randint(1,12)}/2024"
     p_footer = Paragraph(footer_text, FOOTER_STYLE)
     footer_width, footer_height = p_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
-    p_footer.drawOn(c, MARGIN_LEFT, MARGIN_BOTTOM + 0.3*cm)  # Raised up to avoid overlap
+    p_footer.drawOn(c, MARGIN_LEFT, FOOTER_HEIGHT) 
 
-    asc_footer_text = "Python Timetable Generator"
+    asc_footer_text = "Algoritmo Genético para Geração de Horários"
     p_asc_footer = Paragraph(asc_footer_text, FOOTER_STYLE)
-    asc_width, asc_height = p_asc_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
+    asc_width, asc_height = p_asc_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT + 0.3*cm)
     # Align to the right and at bottom
     p_asc_footer.drawOn(c, PAGE_WIDTH - MARGIN_RIGHT - asc_width, MARGIN_BOTTOM)
 
@@ -295,17 +295,22 @@ def draw_course_block_split(c: canvas.Canvas, day_index: int, start_slot_id: str
             text_color = colors.white
         
         course_p_style = ParagraphStyle(
-            'CourseBlockStyle', parent=COURSE_TEXT_STYLE, textColor=text_color,
+            'CourseBlockStyle', 
+            parent=COURSE_TEXT_STYLE, 
+            textColor=text_color,
             fontSize=8,
             leading=9,
-            alignment=TA_CENTER
+            alignment=TA_CENTER,
+            fontName=FONT_NAME,
+            allowWidows=1,
+            allowOrphans=1
         )
 
         # Truncate long course names for better fit
         max_course_name_length = 40
         display_name = course_name if len(course_name) <= max_course_name_length else course_name[:max_course_name_length] + "..."
         
-        text_content = f"<b>{display_name}</b><br/><b>{teacher_name}</b>"
+        text_content = f"<font name='{FONT_NAME}'>{display_name}</font><br/><br/><font name='{FONT_NAME_BOLD}'><b>{teacher_name}</b></font>"
         p_course = Paragraph(text_content, course_p_style)
         
         # Calculate available width/height for text, with padding
@@ -349,8 +354,16 @@ def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
             "courses": []
         }
     
+    # Initialize electives structure
+    periods_data["Eletivas"] = {
+        "page_title_prefix": "CC: Eletivas",
+        "location_info": "Instituto de Computação IC/UFAL, Cidade Universitária, Maceió",
+        "courses": []
+    }
+    
     # Group allocations by period
     allocations_by_period = {}
+    allocations_eletivas = []
     
     # Import disciplines data to get period info
     try:
@@ -366,9 +379,14 @@ def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
         disciplina_obj = disciplinas_dict.get(allocation.disciplina)
         periodo = disciplina_obj.periodo if disciplina_obj else 1
         
-        if periodo not in allocations_by_period:
-            allocations_by_period[periodo] = []
-        allocations_by_period[periodo].append(allocation)
+        if periodo == 0:
+            # This is an elective course
+            allocations_eletivas.append(allocation)
+        else:
+            # Regular period course
+            if periodo not in allocations_by_period:
+                allocations_by_period[periodo] = []
+            allocations_by_period[periodo].append(allocation)
     
     # Convert each period's allocations to PDF format
     for periodo, allocations in allocations_by_period.items():
@@ -432,6 +450,66 @@ def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
         
         periods_data[str(periodo)]["courses"] = courses
     
+    # Process elective courses
+    eletivas_courses = []
+    for allocation in allocations_eletivas:
+        # Group horarios by day to create slots
+        horarios_by_day = {}
+        for horario in allocation.horarios:
+            day_key = day_mapping.get(horario.dia, horario.dia)
+            if day_key not in horarios_by_day:
+                horarios_by_day[day_key] = []
+            horarios_by_day[day_key].append(convert_horario_to_timeslot(horario))
+        
+        # Create slots list for this course
+        slots = []
+        for day, timeslots in horarios_by_day.items():
+            # Sort timeslots to group consecutive ones properly
+            timeslots.sort(key=lambda x: (x[0], int(x[1:])))  # Sort by shift then by number
+            
+            if len(timeslots) >= 2:
+                # Group consecutive slots (e.g., M1, M2 becomes ("Seg", "M1", "M2"))
+                i = 0
+                while i < len(timeslots):
+                    start_slot = timeslots[i]
+                    end_slot = start_slot
+                    
+                    # Find consecutive slots with same shift
+                    j = i + 1
+                    while j < len(timeslots):
+                        current_shift = timeslots[j][0]
+                        current_num = int(timeslots[j][1:])
+                        end_shift = end_slot[0]
+                        end_num = int(end_slot[1:])
+                        
+                        # Check if consecutive and same shift
+                        if (current_shift == end_shift and 
+                            current_num == end_num + 1):
+                            end_slot = timeslots[j]
+                            j += 1
+                        else:
+                            break
+                    
+                    slots.append((day, start_slot, end_slot))
+                    i = j
+            elif len(timeslots) == 1:
+                # Single slot
+                slot = timeslots[0]
+                slots.append((day, slot, slot))
+        
+        # Only add courses that have valid slots
+        if slots:
+            # Create course entry for elective
+            course_entry = {
+                "id": f"ELET_{allocation.disciplina.replace(' ', '_').replace(':', '').replace(',', '')}",
+                "name": allocation.disciplina,
+                "teacher": allocation.professor,
+                "slots": slots
+            }
+            eletivas_courses.append(course_entry)
+    
+    periods_data["Eletivas"]["courses"] = eletivas_courses
+    
     return periods_data
 
 
@@ -486,7 +564,7 @@ def create_timetable_pdf(use_genetic_algorithm=True):
                                       course["name"], course["teacher"], course_color)
         c.showPage()
 
-    # Process "Eletivas" (only if using mock data, genetic algorithm doesn't separate electives)
+    # Process "Eletivas" (elective courses with period = 0)
     if "Eletivas" in COURSE_DATA:
         eletivas_master_list = list(COURSE_DATA["Eletivas"]["courses"]) # Make a mutable copy
         eletivas_info = COURSE_DATA["Eletivas"]
