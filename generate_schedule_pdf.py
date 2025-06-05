@@ -40,15 +40,15 @@ except ImportError:
 PDF_FILENAME = "horario_gerado.pdf"
 PAGE_WIDTH, PAGE_HEIGHT = landscape(A4)
 
-MARGIN_TOP = 1.5 * cm
-MARGIN_BOTTOM = 1.5 * cm
-MARGIN_LEFT = 1 * cm
-MARGIN_RIGHT = 1 * cm
+MARGIN_TOP = 1.2 * cm
+MARGIN_BOTTOM = 1.0 * cm
+MARGIN_LEFT = 0.8 * cm
+MARGIN_RIGHT = 0.8 * cm
 
-HEADER_HEIGHT = 1.5 * cm # For "CC: X Periodo" and institute name
-FOOTER_HEIGHT = 0.75 * cm
-DAY_LABEL_WIDTH = 1.5 * cm
-TIMESLOT_HEADER_HEIGHT = 1.2 * cm # For M1, 7:30-8:20 labels
+HEADER_HEIGHT = 1.8 * cm # For "CC: X Periodo" and institute name
+FOOTER_HEIGHT = 0.6 * cm
+DAY_LABEL_WIDTH = 2.0 * cm  # Increased for better readability
+TIMESLOT_HEADER_HEIGHT = 1.8 * cm # Increased for better time slot labels
 
 GRID_X_START = MARGIN_LEFT + DAY_LABEL_WIDTH
 GRID_Y_START = PAGE_HEIGHT - MARGIN_TOP - HEADER_HEIGHT - TIMESLOT_HEADER_HEIGHT
@@ -61,7 +61,7 @@ ROW_HEIGHT = GRID_HEIGHT / len(DAYS_OF_WEEK)
 NUM_REGULAR_SLOTS = sum(1 for _, _, _, is_interval in TIMESLOT_DEFINITIONS if not is_interval)
 NUM_INTERVAL_SLOTS = sum(1 for _, _, _, is_interval in TIMESLOT_DEFINITIONS if is_interval)
 REGULAR_SLOT_RELATIVE_WIDTH = 1.0
-INTERVAL_SLOT_RELATIVE_WIDTH = 0.3 # Intervals are 30% of regular slot width
+INTERVAL_SLOT_RELATIVE_WIDTH = 0.4 # Increased intervals width for better visibility
 
 TOTAL_RELATIVE_WIDTH_UNITS = (NUM_REGULAR_SLOTS * REGULAR_SLOT_RELATIVE_WIDTH) + \
                              (NUM_INTERVAL_SLOTS * INTERVAL_SLOT_RELATIVE_WIDTH)
@@ -82,23 +82,23 @@ SLOT_ID_TO_INDEX = {slot['id']: i for i, slot in enumerate(COLUMN_PROPERTIES)}
 # --- Styles ---
 styles = getSampleStyleSheet()
 TITLE_STYLE = ParagraphStyle(
-    'TitleStyle', parent=styles['h1'], fontName=FONT_NAME_BOLD, fontSize=14, alignment=TA_LEFT, spaceAfter=0.1*cm
+    'TitleStyle', parent=styles['h1'], fontName=FONT_NAME_BOLD, fontSize=16, alignment=TA_LEFT, spaceAfter=0.1*cm
 )
 LOCATION_STYLE = ParagraphStyle(
-    'LocationStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=9, alignment=TA_LEFT, spaceAfter=0.3*cm
+    'LocationStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=10, alignment=TA_LEFT, spaceAfter=0.3*cm
 )
 DAY_LABEL_STYLE = ParagraphStyle(
-    'DayLabelStyle', parent=styles['Normal'], fontName=FONT_NAME_BOLD, fontSize=9, alignment=TA_CENTER, leading=10
+    'DayLabelStyle', parent=styles['Normal'], fontName=FONT_NAME_BOLD, fontSize=11, alignment=TA_CENTER, leading=12
 )
 TIMESLOT_LABEL_STYLE = ParagraphStyle(
-    'TimeslotLabelStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=7, alignment=TA_CENTER, leading=8
+    'TimeslotLabelStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=8, alignment=TA_CENTER, leading=9
 )
 COURSE_TEXT_STYLE = ParagraphStyle(
-    'CourseStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=7, textColor=colors.black,
-    alignment=TA_CENTER, leading=8
+    'CourseStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=8, textColor=colors.black,
+    alignment=TA_CENTER, leading=9
 )
 FOOTER_STYLE = ParagraphStyle(
-    'FooterStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=8, alignment=TA_LEFT
+    'FooterStyle', parent=styles['Normal'], fontName=FONT_NAME, fontSize=9, alignment=TA_LEFT
 )
 
 # --- Color Generation ---
@@ -139,30 +139,34 @@ def draw_page_template(c: canvas.Canvas, title_text: str, location_text: str):
 
     p_location = Paragraph(location_text, LOCATION_STYLE)
     location_width, location_height = p_location.wrap(PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT, HEADER_HEIGHT - title_height)
-    p_location.drawOn(c, MARGIN_LEFT, PAGE_HEIGHT - MARGIN_TOP - title_height - location_height)
+    p_location.drawOn(c, MARGIN_LEFT, PAGE_HEIGHT - MARGIN_TOP - title_height - location_height - 0.2*cm)
     
     # 2. Footer
-    footer_text = f"Horário criado: {random.randint(1,28)}/{random.randint(1,12)}/2024" # Example date
+    footer_text = f"Horário criado: {random.randint(1,28)}/{random.randint(1,12)}/2024"
     p_footer = Paragraph(footer_text, FOOTER_STYLE)
     footer_width, footer_height = p_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
     p_footer.drawOn(c, MARGIN_LEFT, MARGIN_BOTTOM)
 
-    asc_footer_text = "Python Timetable Generator" # Placeholder for "aSc TimeTables"
+    asc_footer_text = "Python Timetable Generator"
     p_asc_footer = Paragraph(asc_footer_text, FOOTER_STYLE)
     asc_width, asc_height = p_asc_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
     # Align to the right
     p_asc_footer.drawOn(c, PAGE_WIDTH - MARGIN_RIGHT - asc_width, MARGIN_BOTTOM)
 
-
     # 3. Grid Lines and Labels
-    # Horizontal lines
+    # Draw grid border
+    c.setStrokeColor(colors.black)
+    c.setLineWidth(1)
+    
+    # Horizontal lines (including header separator)
+    c.line(MARGIN_LEFT, GRID_Y_START + TIMESLOT_HEADER_HEIGHT, MARGIN_LEFT + DAY_LABEL_WIDTH + GRID_WIDTH, GRID_Y_START + TIMESLOT_HEADER_HEIGHT)
     for i in range(len(DAYS_OF_WEEK) + 1):
         y = GRID_Y_START - (i * ROW_HEIGHT)
         c.line(MARGIN_LEFT, y, MARGIN_LEFT + DAY_LABEL_WIDTH + GRID_WIDTH, y)
 
     # Vertical lines (Day label column + timeslot columns)
-    c.line(MARGIN_LEFT, GRID_Y_START, MARGIN_LEFT, GRID_Y_START - GRID_HEIGHT)
-    c.line(GRID_X_START, GRID_Y_START + TIMESLOT_HEADER_HEIGHT, GRID_X_START, GRID_Y_START - GRID_HEIGHT) # After day labels
+    c.line(MARGIN_LEFT, GRID_Y_START + TIMESLOT_HEADER_HEIGHT, MARGIN_LEFT, GRID_Y_START - GRID_HEIGHT)
+    c.line(GRID_X_START, GRID_Y_START + TIMESLOT_HEADER_HEIGHT, GRID_X_START, GRID_Y_START - GRID_HEIGHT)
     
     for col_prop in COLUMN_PROPERTIES:
         x_line = col_prop['x'] + col_prop['width']
@@ -173,10 +177,10 @@ def draw_page_template(c: canvas.Canvas, title_text: str, location_text: str):
         y_pos = GRID_Y_START - (i * ROW_HEIGHT) - ROW_HEIGHT / 2
         p_day = Paragraph(day_name, DAY_LABEL_STYLE)
         w, h = p_day.wrap(DAY_LABEL_WIDTH, ROW_HEIGHT)
-        p_day.drawOn(c, MARGIN_LEFT + (DAY_LABEL_WIDTH - w)/2, y_pos - h/2) # Centered in cell
+        p_day.drawOn(c, MARGIN_LEFT + (DAY_LABEL_WIDTH - w)/2, y_pos - h/2)
 
-    # Timeslot Labels
-    y_label_base = GRID_Y_START + TIMESLOT_HEADER_HEIGHT - 0.1*cm
+    # Timeslot Labels with better formatting
+    y_label_base = GRID_Y_START + TIMESLOT_HEADER_HEIGHT
     for col_prop in COLUMN_PROPERTIES:
         slot_id = col_prop['id']
         # Find the original definition for label text
@@ -184,13 +188,19 @@ def draw_page_template(c: canvas.Canvas, title_text: str, location_text: str):
         label_L1 = original_def[1]
         label_L2 = original_def[2]
         
-        full_label_text = f"{label_L1}<br/>{label_L2}"
+        # Format timeslot header better
+        if original_def[3]:  # is_interval
+            full_label_text = f"<font size=6>{label_L1}</font><br/><font size=6>{label_L2}</font>"
+        else:
+            full_label_text = f"<b>{label_L1}</b><br/><font size=7>{label_L2}</font>"
+        
         p_slot = Paragraph(full_label_text, TIMESLOT_LABEL_STYLE)
         
         col_width = col_prop['width']
         w, h = p_slot.wrap(col_width, TIMESLOT_HEADER_HEIGHT)
         
-        p_slot.drawOn(c, col_prop['x'] + (col_width - w) / 2, y_label_base - h)
+        # Center in the column with proper vertical alignment
+        p_slot.drawOn(c, col_prop['x'] + (col_width - w) / 2, y_label_base - h - 0.2*cm)
 
 
 def get_elementary_slots_indices(start_slot_id: str, end_slot_id: str):
@@ -228,38 +238,45 @@ def draw_course_block(c: canvas.Canvas, day_index: int, start_slot_id: str, end_
     
     block_height = ROW_HEIGHT
 
-    # Draw colored rectangle
+    # Draw colored rectangle with padding
+    padding = 1  # Small padding from grid lines
     c.setFillColor(fill_color)
-    c.setStrokeColor(colors.darkgrey) # Border for the block
-    c.rect(block_x, block_y, block_width, block_height, fill=1, stroke=1)
+    c.setStrokeColor(colors.darkgrey)
+    c.rect(block_x + padding, block_y + padding, block_width - 2*padding, block_height - 2*padding, fill=1, stroke=1)
 
     # Draw text (course name and teacher)
-    # Adjust text color for better contrast if needed (e.g., if bg is very dark)
+    # Adjust text color for better contrast
     r, g, b, _ = fill_color.rgba()
-    # Simple brightness check: if sum of RGB is low, use white text
     text_color = colors.black
-    if (r + g + b) < 1.0: # Threshold can be adjusted
-        text_color = colors.whitesmoke
+    if (r + g + b) < 1.5: # Darker background needs lighter text
+        text_color = colors.white
     
     course_p_style = ParagraphStyle(
         'CourseBlockStyle', parent=COURSE_TEXT_STYLE, textColor=text_color,
-        fontSize=6.5, # Slightly smaller to fit more text
-        leading=7
+        fontSize=8,  # Increased font size
+        leading=9,
+        alignment=TA_CENTER
     )
 
-    text_content = f"{course_name}<br/><i>{teacher_name}</i>"
+    # Truncate long course names for better fit
+    max_course_name_length = 40
+    display_name = course_name if len(course_name) <= max_course_name_length else course_name[:max_course_name_length] + "..."
+    
+    text_content = f"<b>{display_name}</b><br/><i>{teacher_name}</i>"
     p_course = Paragraph(text_content, course_p_style)
     
-    # Calculate available width/height for text, with small padding
-    text_area_width = block_width - 0.2 * cm
-    text_area_height = block_height - 0.2 * cm
+    # Calculate available width/height for text, with padding
+    text_area_width = block_width - 0.4 * cm  # Increased padding
+    text_area_height = block_height - 0.3 * cm  # Increased padding
     
-    w, h = p_course.wrap(text_area_width, text_area_height)
-    
-    # Center the paragraph in the block
-    text_x = block_x + (block_width - w) / 2
-    text_y = block_y + (block_height - h) / 2
-    p_course.drawOn(c, text_x, text_y)
+    # Ensure minimum dimensions
+    if text_area_width > 0 and text_area_height > 0:
+        w, h = p_course.wrap(text_area_width, text_area_height)
+        
+        # Center the paragraph in the block
+        text_x = block_x + (block_width - w) / 2
+        text_y = block_y + (block_height - h) / 2
+        p_course.drawOn(c, text_x, text_y)
 
 
 def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
@@ -275,7 +292,7 @@ def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
         'Sexta': 'Sex'
     }
     
-    # Time slot mapping from genetic algorithm format (M1, T1, etc.) to PDF format
+    # Time slot mapping from genetic algorithm format (M1-6, T1-6) to PDF format
     def convert_horario_to_timeslot(horario):
         """Convert Horario object to timeslot format used by PDF generator"""
         return f"{horario.turno}{horario.slot}"
@@ -359,14 +376,16 @@ def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
                     slot = timeslots[0]
                     slots.append((day, slot, slot))
             
-            # Create course entry
-            course_entry = {
-                "id": f"{periodo}_{allocation.disciplina.replace(' ', '_').replace(':', '').replace(',', '')}",
-                "name": allocation.disciplina,
-                "teacher": allocation.professor,
-                "slots": slots
-            }
-            courses.append(course_entry)
+            # Only add courses that have valid slots
+            if slots:
+                # Create course entry
+                course_entry = {
+                    "id": f"{periodo}_{allocation.disciplina.replace(' ', '_').replace(':', '').replace(',', '')}",
+                    "name": allocation.disciplina,
+                    "teacher": allocation.professor,
+                    "slots": slots
+                }
+                courses.append(course_entry)
         
         periods_data[str(periodo)]["courses"] = courses
     
