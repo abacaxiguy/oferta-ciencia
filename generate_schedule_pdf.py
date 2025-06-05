@@ -141,16 +141,16 @@ def draw_page_template(c: canvas.Canvas, title_text: str, location_text: str):
     location_width, location_height = p_location.wrap(PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT, HEADER_HEIGHT - title_height)
     p_location.drawOn(c, MARGIN_LEFT, PAGE_HEIGHT - MARGIN_TOP - title_height - location_height - 0.2*cm)
     
-    # 2. Footer
+    # 2. Footer - Fixed overlapping issue
     footer_text = f"Horário criado: {random.randint(1,28)}/{random.randint(1,12)}/2024"
     p_footer = Paragraph(footer_text, FOOTER_STYLE)
     footer_width, footer_height = p_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
-    p_footer.drawOn(c, MARGIN_LEFT, MARGIN_BOTTOM)
+    p_footer.drawOn(c, MARGIN_LEFT, MARGIN_BOTTOM + 0.3*cm)  # Raised up to avoid overlap
 
     asc_footer_text = "Python Timetable Generator"
     p_asc_footer = Paragraph(asc_footer_text, FOOTER_STYLE)
     asc_width, asc_height = p_asc_footer.wrap(GRID_X_START + GRID_WIDTH - MARGIN_LEFT, FOOTER_HEIGHT)
-    # Align to the right
+    # Align to the right and at bottom
     p_asc_footer.drawOn(c, PAGE_WIDTH - MARGIN_RIGHT - asc_width, MARGIN_BOTTOM)
 
     # 3. Grid Lines and Labels
@@ -218,65 +218,108 @@ def get_elementary_slots_indices(start_slot_id: str, end_slot_id: str):
     return list(range(start_idx, end_idx + 1))
 
 
-def draw_course_block(c: canvas.Canvas, day_index: int, start_slot_id: str, end_slot_id: str,
-                      course_name: str, teacher_name: str, fill_color):
-    """Draws a single course block spanning specified slots on a given day."""
-    
+def get_course_blocks_with_intervals(start_slot_id: str, end_slot_id: str):
+    """
+    Returns a list of course blocks, splitting around intervals.
+    Each block is a tuple (start_idx, end_idx) of non-interval slots.
+    """
     try:
-        first_col_idx = SLOT_ID_TO_INDEX[start_slot_id]
-        last_col_idx = SLOT_ID_TO_INDEX[end_slot_id]
+        start_idx = SLOT_ID_TO_INDEX[start_slot_id]
+        end_idx = SLOT_ID_TO_INDEX[end_slot_id]
     except KeyError:
-        print(f"Error drawing course: Slot ID {start_slot_id} or {end_slot_id} invalid.")
-        return
-
-    block_x = COLUMN_PROPERTIES[first_col_idx]['x']
-    block_y = GRID_Y_START - ((day_index + 1) * ROW_HEIGHT)
+        print(f"Error: Slot ID {start_slot_id} or {end_slot_id} not found.")
+        return []
     
-    block_width = 0
-    for i in range(first_col_idx, last_col_idx + 1):
-        block_width += COLUMN_PROPERTIES[i]['width']
+    if start_idx > end_idx:
+        return []
     
-    block_height = ROW_HEIGHT
-
-    # Draw colored rectangle with padding
-    padding = 1  # Small padding from grid lines
-    c.setFillColor(fill_color)
-    c.setStrokeColor(colors.darkgrey)
-    c.rect(block_x + padding, block_y + padding, block_width - 2*padding, block_height - 2*padding, fill=1, stroke=1)
-
-    # Draw text (course name and teacher)
-    # Adjust text color for better contrast
-    r, g, b, _ = fill_color.rgba()
-    text_color = colors.black
-    if (r + g + b) < 1.5: # Darker background needs lighter text
-        text_color = colors.white
+    # Find all interval slots within the range
+    blocks = []
+    current_block_start = start_idx
     
-    course_p_style = ParagraphStyle(
-        'CourseBlockStyle', parent=COURSE_TEXT_STYLE, textColor=text_color,
-        fontSize=8,  # Increased font size
-        leading=9,
-        alignment=TA_CENTER
-    )
-
-    # Truncate long course names for better fit
-    max_course_name_length = 40
-    display_name = course_name if len(course_name) <= max_course_name_length else course_name[:max_course_name_length] + "..."
-    
-    text_content = f"<b>{display_name}</b><br/><i>{teacher_name}</i>"
-    p_course = Paragraph(text_content, course_p_style)
-    
-    # Calculate available width/height for text, with padding
-    text_area_width = block_width - 0.4 * cm  # Increased padding
-    text_area_height = block_height - 0.3 * cm  # Increased padding
-    
-    # Ensure minimum dimensions
-    if text_area_width > 0 and text_area_height > 0:
-        w, h = p_course.wrap(text_area_width, text_area_height)
+    for i in range(start_idx, end_idx + 1):
+        slot_id = COLUMN_PROPERTIES[i]['id']
+        # Find if this slot is an interval
+        is_interval = False
+        for _, _, _, interval_flag in TIMESLOT_DEFINITIONS:
+            if _ == slot_id and interval_flag:
+                is_interval = True
+                break
         
-        # Center the paragraph in the block
-        text_x = block_x + (block_width - w) / 2
-        text_y = block_y + (block_height - h) / 2
-        p_course.drawOn(c, text_x, text_y)
+        if is_interval:
+            # If we hit an interval, close the current block (if it exists)
+            if current_block_start < i:
+                blocks.append((current_block_start, i - 1))
+            # Skip the interval and start a new block after it
+            current_block_start = i + 1
+    
+    # Add the final block if it exists
+    if current_block_start <= end_idx:
+        blocks.append((current_block_start, end_idx))
+    
+    return blocks
+
+
+def draw_course_block_split(c: canvas.Canvas, day_index: int, start_slot_id: str, end_slot_id: str,
+                           course_name: str, teacher_name: str, fill_color):
+    """Draws course blocks, splitting around intervals if necessary."""
+    
+    # Get the blocks, split around intervals
+    blocks = get_course_blocks_with_intervals(start_slot_id, end_slot_id)
+    
+    if not blocks:
+        print(f"No valid blocks found for course {course_name}")
+        return
+    
+    for block_start_idx, block_end_idx in blocks:
+        # Draw each block separately
+        block_x = COLUMN_PROPERTIES[block_start_idx]['x']
+        block_y = GRID_Y_START - ((day_index + 1) * ROW_HEIGHT)
+        
+        block_width = 0
+        for i in range(block_start_idx, block_end_idx + 1):
+            block_width += COLUMN_PROPERTIES[i]['width']
+        
+        block_height = ROW_HEIGHT
+
+        # Draw colored rectangle with padding
+        padding = 1
+        c.setFillColor(fill_color)
+        c.setStrokeColor(colors.darkgrey)
+        c.rect(block_x + padding, block_y + padding, block_width - 2*padding, block_height - 2*padding, fill=1, stroke=1)
+
+        # Draw text (course name and teacher)
+        r, g, b, _ = fill_color.rgba()
+        text_color = colors.black
+        if (r + g + b) < 1.5:
+            text_color = colors.white
+        
+        course_p_style = ParagraphStyle(
+            'CourseBlockStyle', parent=COURSE_TEXT_STYLE, textColor=text_color,
+            fontSize=8,
+            leading=9,
+            alignment=TA_CENTER
+        )
+
+        # Truncate long course names for better fit
+        max_course_name_length = 40
+        display_name = course_name if len(course_name) <= max_course_name_length else course_name[:max_course_name_length] + "..."
+        
+        text_content = f"<b>{display_name}</b><br/><b>{teacher_name}</b>"
+        p_course = Paragraph(text_content, course_p_style)
+        
+        # Calculate available width/height for text, with padding
+        text_area_width = block_width - 0.4 * cm
+        text_area_height = block_height - 0.3 * cm
+        
+        # Ensure minimum dimensions
+        if text_area_width > 0 and text_area_height > 0:
+            w, h = p_course.wrap(text_area_width, text_area_height)
+            
+            # Center the paragraph in the block
+            text_x = block_x + (block_width - w) / 2
+            text_y = block_y + (block_height - h) / 2
+            p_course.drawOn(c, text_x, text_y)
 
 
 def convert_genetic_algorithm_result_to_pdf_format(genetic_result):
@@ -439,8 +482,8 @@ def create_timetable_pdf(use_genetic_algorithm=True):
                     print(f"Warning: Invalid day '{day_str}' for course '{course['name']}'. Skipping slot.")
                     continue
                 
-                draw_course_block(c, day_idx, start_slot, end_slot,
-                                  course["name"], course["teacher"], course_color)
+                draw_course_block_split(c, day_idx, start_slot, end_slot,
+                                      course["name"], course["teacher"], course_color)
         c.showPage()
 
     # Process "Eletivas" (only if using mock data, genetic algorithm doesn't separate electives)
@@ -499,8 +542,8 @@ def create_timetable_pdf(use_genetic_algorithm=True):
 
                     for day_str, start_slot, end_slot in course["slots"]:
                         day_idx = DAYS_OF_WEEK.index(day_str) # Already validated
-                        draw_course_block(c, day_idx, start_slot, end_slot,
-                                          course["name"], course["teacher"], course_color)
+                        draw_course_block_split(c, day_idx, start_slot, end_slot,
+                                              course["name"], course["teacher"], course_color)
                     
                     # Mark its slots as occupied for this page
                     occupied_slots_on_this_page.update(prospective_slots_for_this_course)
