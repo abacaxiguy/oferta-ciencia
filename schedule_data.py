@@ -66,7 +66,7 @@ COURSE_DATA = {
             {
                 "id": "1_MD",
                 "name": "MATEMÁTICA DISCRETA",
-                "teacher": "LUCAS AMORIM",
+                "teacher": "BRUNO PIMENTEL",
                 "slots": [("Ter", "N1", "N2"), ("Qui", "N1", "N2")],
             },
             {
@@ -96,13 +96,13 @@ COURSE_DATA = {
             {
                 "id": "2_OAC",
                 "name": "ORG E ARQ. DE COMPUTADORES",
-                "teacher": "LUCAS AMORIM",
+                "teacher": "BRUNO NOGUEIRA",
                 "slots": [("Ter", "M3", "M4"), ("Qui", "M3", "M4")],
             },
             {
                 "id": "2_ED",
                 "name": "ESTRUTURA DE DADOS",
-                "teacher": "MARIO HOZANO",
+                "teacher": "ROBERTA",
                 "slots": [("Ter", "M5", "M6"), ("Qui", "M5", "M6")],
             },
         ],
@@ -131,7 +131,7 @@ COURSE_DATA = {
             },  # Qui M5-M6 as per PDF image for 3rd period
             {
                 "id": "3_RC1",
-                "name": "REDES DE COMPUTADORES 1",
+                "name": "REDES DE COMPUTADORES",
                 "teacher": "ALMIR P GUIMARAES",
                 "slots": [("Ter", "T3", "T4"), ("Qua", "T3", "T4")],
             },  # Note: PDF for 3rd period shows Qua T3-T4 for Redes, but that conflicts with PE. Assuming typo and placing on different day/time or you adjust

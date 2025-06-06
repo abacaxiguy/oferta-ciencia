@@ -127,7 +127,7 @@ class GeneticScheduler:
             ("ACE 5: EVENTO", 8, True, False)
         ]
         
-        # Eletivas - Disciplinas opcionais (período 0 conforme projeto.txt)
+        # Eletivas - Disciplinas opcionais (período 0)
         disciplinas_eletivas = [
             ("INTRODUÇÃO À COMPUTAÇÃO", 0, False, True),
             ("CONCEITOS DE LINGUAGEM DE PROGRAMAÇÃO", 0, False, False),
@@ -698,10 +698,88 @@ class GeneticScheduler:
         return copy.deepcopy(populacao[melhor_idx])
     
     def imprimir_solucao(self, solucao: List[Alocacao]):
-        """Imprime a solução de forma organizada"""
-        print("\n" + "="*80)
-        print("OFERTA ACADÊMICA - CURSO DE CIÊNCIA DA COMPUTAÇÃO")
-        print("="*80)
+        """Imprime a solução de forma organizada e visual"""
+        print("\n" + "="*120)
+        print("🎓 OFERTA ACADÊMICA - CURSO DE CIÊNCIA DA COMPUTAÇÃO 🎓".center(120))
+        print("="*120)
+        
+        # Cria visualização por dia da semana
+        self._imprimir_grade_por_dia(solucao)
+        
+        # Cria tabela resumo por período
+        self._imprimir_tabela_por_periodo(solucao)
+        
+        # Estatísticas
+        self._imprimir_estatisticas(solucao)
+    
+
+    def _imprimir_grade_por_dia(self, solucao: List[Alocacao]):
+        """Imprime as disciplinas organizadas por dia da semana"""
+        print("\n📅 DISCIPLINAS POR DIA DA SEMANA")
+        print("="*120)
+        
+        # Organiza disciplinas por dia
+        disciplinas_por_dia = {}
+        for dia in self.dias_semana:
+            disciplinas_por_dia[dia] = {'M': [], 'T': []}
+        
+        # Coleta todas as disciplinas de cada dia
+        for alocacao in solucao:
+            disciplinas_ja_adicionadas = set()  # Para evitar duplicatas
+            for horario in alocacao.horarios:
+                dia = horario.dia
+                turno = horario.turno
+                
+                # Evita adicionar a mesma disciplina múltiplas vezes no mesmo dia/turno
+                chave_disciplina = f"{alocacao.disciplina}_{dia}_{turno}"
+                if chave_disciplina not in disciplinas_ja_adicionadas:
+                    disciplinas_por_dia[dia][turno].append({
+                        'disciplina': alocacao.disciplina,
+                        'professor': alocacao.professor,
+                        'sala': alocacao.sala,
+                        'horarios': [h for h in alocacao.horarios if h.dia == dia and h.turno == turno]
+                    })
+                    disciplinas_ja_adicionadas.add(chave_disciplina)
+        
+        # Imprime cada dia
+        for dia in self.dias_semana:
+            print(f"\n🗓️  {dia.upper()}")
+            print("-" * 120)
+            
+            # Manhã
+            if disciplinas_por_dia[dia]['M']:
+                print("☀️  MANHÃ:")
+                for disc_info in sorted(disciplinas_por_dia[dia]['M'], key=lambda x: x['disciplina']):
+                    slots = sorted([f"M{h.slot}" for h in disc_info['horarios']])
+                    slots_str = ", ".join(slots)
+                    
+                    disciplina = disc_info['disciplina'][:35] + '..' if len(disc_info['disciplina']) > 37 else disc_info['disciplina']
+                    professor = disc_info['professor'][:25] + '..' if len(disc_info['professor']) > 27 else disc_info['professor']
+                    
+                    print(f"   📚 {disciplina:<40} | 👨‍🏫 {professor:<30} | 🏠 {disc_info['sala']:<20} | ⏰ {slots_str}")
+            
+            # Tarde  
+            if disciplinas_por_dia[dia]['T']:
+                print("🌅 TARDE:")
+                for disc_info in sorted(disciplinas_por_dia[dia]['T'], key=lambda x: x['disciplina']):
+                    slots = sorted([f"T{h.slot}" for h in disc_info['horarios']])
+                    slots_str = ", ".join(slots)
+                    
+                    disciplina = disc_info['disciplina'][:35] + '..' if len(disc_info['disciplina']) > 37 else disc_info['disciplina']
+                    professor = disc_info['professor'][:25] + '..' if len(disc_info['professor']) > 27 else disc_info['professor']
+                    
+                    print(f"   📚 {disciplina:<40} | 👨‍🏫 {professor:<30} | 🏠 {disc_info['sala']:<20} | ⏰ {slots_str}")
+            
+            # Se não há aulas no dia
+            if not disciplinas_por_dia[dia]['M'] and not disciplinas_por_dia[dia]['T']:
+                print("   📅 Sem aulas programadas")
+        
+        print("\n" + "="*120)
+    
+    def _imprimir_tabela_por_periodo(self, solucao: List[Alocacao]):
+        """Imprime tabela organizada por período"""
+        print("\n📚 DISCIPLINAS POR PERÍODO")
+        print("="*120)
         
         # Agrupa por período
         disciplinas_por_periodo = {}
@@ -714,77 +792,133 @@ class GeneticScheduler:
                 disciplinas_por_periodo[periodo].append(alocacao)
         
         for periodo in sorted(disciplinas_por_periodo.keys()):
-            print(f"\n{periodo}º PERÍODO:")
-            print("-" * 50)
+            titulo = f"🔹 {periodo}º PERÍODO" if periodo != 0 else "🔸 DISCIPLINAS ELETIVAS"
+            print(f"\n{titulo}")
+            print("-" * 120)
             
-            for alocacao in disciplinas_por_periodo[periodo]:
-                print(f"\nDisciplina: {alocacao.disciplina}")
-                print(f"Professor: {alocacao.professor}")
-                print(f"Sala: {alocacao.sala}")
-                print("Horários:")
-                
-                # Agrupa horários por dia
+            # Cabeçalho da tabela
+            print(f"{'DISCIPLINA':<40} {'PROFESSOR':<25} {'SALA':<20} {'HORÁRIOS':<35}")
+            print("-" * 120)
+            
+            for alocacao in sorted(disciplinas_por_periodo[periodo], key=lambda x: x.disciplina):
+                # Formata horários
                 horarios_por_dia = {}
                 for horario in alocacao.horarios:
-                    dia = horario.dia
+                    dia = horario.dia[:3]  # Abrevia o dia
                     if dia not in horarios_por_dia:
                         horarios_por_dia[dia] = []
                     horarios_por_dia[dia].append(f"{horario.turno}{horario.slot}")
                 
-                for dia, slots in horarios_por_dia.items():
-                    print(f"  {dia}: {', '.join(sorted(slots))}")
+                horarios_str = " | ".join([f"{dia}: {','.join(sorted(slots))}" 
+                                         for dia, slots in horarios_por_dia.items()])
+                
+                # Trunca textos longos
+                disciplina = alocacao.disciplina[:38] + '..' if len(alocacao.disciplina) > 40 else alocacao.disciplina
+                professor = alocacao.professor[:23] + '..' if len(alocacao.professor) > 25 else alocacao.professor
+                sala = alocacao.sala[:18] + '..' if len(alocacao.sala) > 20 else alocacao.sala
+                horarios_str = horarios_str[:33] + '..' if len(horarios_str) > 35 else horarios_str
+                
+                # Verifica se é laboratório
+                disciplina_obj = next((d for d in self.disciplinas if d.nome == alocacao.disciplina), None)
+                sala_obj = next((s for s in self.salas if s.nome == alocacao.sala), None)
+                
+                lab_icon = " 🔬" if disciplina_obj and disciplina_obj.laboratorio_necessario else ""
+                sala_icon = " 💻" if sala_obj and sala_obj.laboratorio else ""
+                
+                print(f"{disciplina:<40} {professor:<25} {sala + sala_icon:<20} {horarios_str:<35}")
+    
+    def _imprimir_estatisticas(self, solucao: List[Alocacao]):
+        """Imprime estatísticas da solução"""
+        print(f"\n📊 ESTATÍSTICAS E ANÁLISE DA SOLUÇÃO")
+        print("="*120)
         
-        # Estatísticas
-        print(f"\n" + "="*80)
-        print("ESTATÍSTICAS E ANÁLISE DA SOLUÇÃO:")
-        print("="*80)
+        # Fitness da solução
+        fitness = self.calcular_fitness(solucao)
+        print(f"🎯 Fitness da solução: {fitness}")
         
-        print(f"Total de disciplinas alocadas: {len(solucao)}")
+        # Estatísticas básicas
+        print(f"📋 Total de disciplinas alocadas: {len(solucao)}")
         
-        # Disciplinas obrigatórias alocadas
+        # Disciplinas obrigatórias
         obrigatorias_alocadas = sum(1 for alocacao in solucao 
                                   for disc in self.disciplinas 
                                   if disc.nome == alocacao.disciplina and disc.obrigatoria)
         total_obrigatorias = sum(1 for d in self.disciplinas if d.obrigatoria)
-        print(f"Disciplinas obrigatórias alocadas: {obrigatorias_alocadas}/{total_obrigatorias}")
+        percentual_obrig = (obrigatorias_alocadas / total_obrigatorias) * 100 if total_obrigatorias > 0 else 0
         
-        # Verifica conflitos
+        print(f"✅ Disciplinas obrigatórias: {obrigatorias_alocadas}/{total_obrigatorias} ({percentual_obrig:.1f}%)")
+        
+        # Conflitos
         conflitos_professor = self._verificar_conflitos_professor(solucao)
         conflitos_sala = self._verificar_conflitos_sala(solucao)
         
-        print(f"Conflitos de horário (Professor): {conflitos_professor}")
-        print(f"Conflitos de horário (Sala): {conflitos_sala}")
+        status_conflitos = "✅ Sem conflitos" if (conflitos_professor + conflitos_sala) == 0 else f"⚠️ {conflitos_professor + conflitos_sala} conflitos"
+        print(f"🔍 Status dos conflitos: {status_conflitos}")
+        if conflitos_professor > 0:
+            print(f"   👨‍🏫 Conflitos de professor: {conflitos_professor}")
+        if conflitos_sala > 0:
+            print(f"   🏠 Conflitos de sala: {conflitos_sala}")
         
         # Uso de laboratórios
         labs_usados = sum(1 for alocacao in solucao 
                          for sala in self.salas 
                          if sala.nome == alocacao.sala and sala.laboratorio)
-        print(f"Laboratórios utilizados: {labs_usados} alocações")
+        labs_necessarios = sum(1 for alocacao in solucao 
+                              for disc in self.disciplinas 
+                              if disc.nome == alocacao.disciplina and disc.laboratorio_necessario)
         
-        # Carga de trabalho dos professores
+        print(f"🔬 Laboratórios utilizados: {labs_usados} alocações")
+        print(f"🧪 Disciplinas que precisam de lab: {labs_necessarios}")
+        
+        # Tabela de carga de trabalho dos professores
+        print(f"\n👨‍🏫 DISTRIBUIÇÃO DE DISCIPLINAS POR PROFESSOR")
+        print("-" * 80)
+        print(f"{'PROFESSOR':<35} {'DISCIPLINAS':<15} {'DIAS/SEMANA':<15} {'STATUS':<15}")
+        print("-" * 80)
+        
         disciplinas_por_prof = {}
+        prof_horarios = {}
+        
         for alocacao in solucao:
             prof = alocacao.professor
             if prof not in disciplinas_por_prof:
                 disciplinas_por_prof[prof] = 0
+                prof_horarios[prof] = set()
             disciplinas_por_prof[prof] += 1
-        
-        print(f"\nDistribuição de disciplinas por professor:")
-        for prof, num_disc in sorted(disciplinas_por_prof.items()):
-            print(f"  {prof}: {num_disc} disciplina(s)")
-            
-        # Professores presentes todos os dias
-        prof_horarios = {}
-        for alocacao in solucao:
-            if alocacao.professor not in prof_horarios:
-                prof_horarios[alocacao.professor] = set()
             for horario in alocacao.horarios:
-                prof_horarios[alocacao.professor].add(horario.dia)
+                prof_horarios[prof].add(horario.dia)
         
-        profs_todos_dias = [prof for prof, dias in prof_horarios.items() if len(dias) == 5]
-        print(f"\nProfessores presentes todos os dias da semana: {len(profs_todos_dias)}")
-        for prof in profs_todos_dias:
-            print(f"  ✓ {prof}")
+        for prof in sorted(disciplinas_por_prof.keys()):
+            num_disc = disciplinas_por_prof[prof]
+            num_dias = len(prof_horarios[prof])
+            
+            # Status baseado na carga
+            if num_disc <= 3:
+                status = "✅ Ótimo"
+            elif num_disc <= 4:
+                status = "⚠️ Alto"
+            else:
+                status = "🔴 Crítico"
+            
+            # Adiciona indicador se presente todos os dias
+            if num_dias == 5:
+                status += " 📅"
+            
+            prof_nome = prof[:33] + '..' if len(prof) > 35 else prof
+            print(f"{prof_nome:<35} {num_disc:<15} {num_dias:<15} {status:<15}")
+        
+        # Resumo final
+        print(f"\n🎉 RESUMO FINAL")
+        print("-" * 50)
+        print(f"✅ Disciplinas alocadas com sucesso: {len(solucao)}")
+        print(f"👨‍🏫 Professores envolvidos: {len(disciplinas_por_prof)}")
+        print(f"🏠 Salas utilizadas: {len(set(a.sala for a in solucao))}")
+        print(f"⏰ Slots de horário ocupados: {sum(len(a.horarios) for a in solucao)}")
+        
+        if (conflitos_professor + conflitos_sala) == 0:
+            print("🌟 Parabéns! Solução sem conflitos encontrada!")
+        
+        print("\n" + "="*120)
     
     def _verificar_conflitos_professor(self, solucao: List[Alocacao]) -> int:
         """Conta conflitos de horário de professores"""
